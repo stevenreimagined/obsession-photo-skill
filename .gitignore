@@ -15,7 +15,7 @@ selection_report.html
 *_annotated.jpg
 scaffoldtest/
 pipeline_*/
-*.skill
+# .skill 安装包随仓库分发，不忽略
 *.log
 .idea/
 .vscode/
