@@ -6,11 +6,25 @@ A Claude Skill that mentors **new photography-club members** — helping them un
 
 ## 功能 / What it does
 
-1. **看懂好照片** — 用通俗语言讲解什么是好照片，对照摄影大师的标准与可模仿的技术。
-2. **评估作品** — 发来一张照片，按"主体·构图·光线·曝光·色彩·瞬间"六维点评，给出拍摄分与颜色分，并指出**最该改的一件事**。
-3. **后期指导** — 给出分步修图工作流(选片→裁剪→白平衡→曝光→调色→局部→锐化)和"问题→对应调整"对照表。
+覆盖一次拍摄任务的**全流程：拍前 → 拍中 → 拍后**。
 
-设计基调：先肯定、再点问题、只给一条最高优先级建议、**永不打击新社员信心**。
+**🅰 拍前**
+
+1. **场景参数推荐** — 给出场景+机型(如室内篮球/FX30)，输出快门/光圈/ISO/白平衡/对焦/连拍/格式/视频帧率/Picture Profile/防频闪一整套参数，**并解释为什么**。
+
+**🅱 拍中**
+
+2. **现场问题诊断** — 描述问题(偏黄/快门锁死/脸暗/LED条纹/失焦)，按"最可能原因→立即操作→下一步"给方案。
+3. **构图/技术检测** — 脚本检测地平线倾斜、人脸切边、主体过中心/过小、头顶空间、高光过曝、主体脱焦、疑似闭眼、背景杂乱。
+
+**🅲 拍后**
+
+4. **评图** — 按"主体·构图·光线·曝光·色彩·瞬间"六维点评，给拍摄分/颜色分 + 最该改的一件事 + 对标大师。
+5. **EXIF 参数教学** — 读取并解读拍摄参数。
+6. **一键修图** — 按标准工作流自动处理，参数可调、默认保守，自动出原图/成品对比。
+7. **批量选片初筛 + 连拍最佳张** — 把整个文件夹分成 推荐保留/可选/建议淘汰/技术问题，连拍分组挑★最佳张，输出 CSV + 彩框标注拼图。**只建议、不自动删除**。
+
+设计基调：先肯定、再点问题、只给一条最高优先级建议、客观工具只做辅助、**最终决定权永远在摄影师**。
 
 ## 怎么用 / How to use
 
@@ -24,13 +38,26 @@ A Claude Skill that mentors **new photography-club members** — helping them un
 
 ```
 obsession.skill/
-├── SKILL.md                  # 主控:路由 + 评图输出结构 + 修图流程
-└── references/
-    ├── evaluation.md         # 六维评图框架 + 评分尺度 + 选片用法
-    ├── masters.md            # 各题材摄影大师与可学技术
-    ├── editing.md            # 7 步修图工作流 + 常见问题对照表
-    └── benchmarks.md         # 各题材优秀照片文字标杆 + 社团作品库
+├── SKILL.md                  # 主控:三阶段路由 + 评图/修图流程 + 工具用法
+├── references/
+│   ├── shooting_settings.md  # 🅰 拍前参数方法论 + 场景预设 + 防频闪 + 机型说明
+│   ├── troubleshooting.md    # 🅱 现场问题诊断(原因→操作→下一步)
+│   ├── evaluation.md         # 🅲 六维评图框架 + 评分尺度 + 选片用法
+│   ├── masters.md            # 各题材摄影大师与可学技术
+│   ├── master_matching.md    # 🅲 对标大师的匹配方法与话术
+│   ├── editing.md            # 🅲 7 步修图工作流 + 常见问题对照表
+│   └── benchmarks.md         # 各题材优秀照片文字标杆 + 社团作品库
+└── scripts/
+    ├── recommend_settings.py # 🅰 场景→整套参数(带解释)
+    ├── exif_info.py          # 🅲 读取并解读拍摄参数
+    ├── auto_edit.py          # 🅲 一键修图(可调参数 + 自动对比图)
+    ├── compose_check.py      # 🅱 单张构图/技术检测
+    ├── cull.py               # 🅲 批量选片初筛 + 连拍最佳张
+    └── eyestate.py           # 睁闭眼判断模块(EAR,被上面调用)
 ```
+
+依赖：`pip install opencv-python-headless pillow numpy mediapipe --break-system-packages`
+（`recommend_settings.py` 只用标准库；`exif_info.py` 只需 pillow；图像分析脚本需 opencv+numpy；**睁闭眼判断需 mediapipe，可选**——没装则闭眼标"无法判断"，不臆断）。用法见 SKILL.md 的"工具脚本"一节。
 
 ## 安装 / Installation
 

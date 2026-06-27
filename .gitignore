@@ -1,5 +1,14 @@
 .DS_Store
 Thumbs.db
+
+# 测试/演示用的照片与脚本输出，不进 skill 仓库
+test.jpg
+*_edited.jpg
+*_compare.jpg
+讲者-修图版.jpg
+cull_report.csv
+cull_contactsheet.jpg
+culltest/
 *.log
 .idea/
 .vscode/
