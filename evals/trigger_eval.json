@@ -1,0 +1,23 @@
+[
+  {"query": "明天社团迎新晚会，我用 FX30 拍，场地灯光比较暗，快门、光圈、ISO、白平衡这些到底该怎么设？", "should_trigger": true},
+  {"query": "帮我看看这张照片拍得怎么样，好在哪里、有什么毛病，能打个分吗", "should_trigger": true},
+  {"query": "我拍着拍着快门突然不能调了，ISO 也变灰，眼控对焦也开不了，这是咋回事", "should_trigger": true},
+  {"query": "活动现场拍出来偏黄，人脸还有点暗，赶时间，怎么快速解决", "should_trigger": true},
+  {"query": "这场篮球赛拍了八百多张，帮我先初筛一下哪些是糊的废片，连拍里挑最清楚的那张", "should_trigger": true},
+  {"query": "这张人像帮我看看怎么修，颜色和肤色想调自然点，别太假", "should_trigger": true},
+  {"query": "帮我把这张照片的快门光圈ISO焦距读出来，顺便讲讲为什么这么拍能出这个效果", "should_trigger": true},
+  {"query": "这次话剧节我想建一套规范的文件夹结构，再把三台机器的素材统一命名，方便后期协作", "should_trigger": true},
+  {"query": "素材刚导完，帮我快速扫一遍有没有损坏的文件，或者哪段视频没有声音、片段特别短", "should_trigger": true},
+  {"query": "这张照片的路子像哪位摄影大师？我想照着学，该去研究谁的作品", "should_trigger": true},
+
+  {"query": "帮我用 Premiere 把这段素材剪成一分钟的 vlog，加点转场和背景音乐", "should_trigger": false},
+  {"query": "预算五千左右，推荐一台适合新手的微单买哪个型号比较好", "should_trigger": false},
+  {"query": "帮我写一条这次社团活动的朋友圈文案，配九宫格那种", "should_trigger": false},
+  {"query": "我的 Python 脚本报 TypeError，帮我看看哪里写错了", "should_trigger": false},
+  {"query": "帮我把这份 PDF 转成可编辑的 Word 文档", "should_trigger": false},
+  {"query": "帮我设计一张社团招新海报，A3 尺寸，要有标题和二维码", "should_trigger": false},
+  {"query": "SD 卡不小心被我格式化了，里面的照片还能恢复吗", "should_trigger": false},
+  {"query": "帮我把这 30 个 RAW 批量转成 JPG，尺寸不用变，就单纯换个格式", "should_trigger": false},
+  {"query": "我想给摄影社做一个作品集网站，帮我搭个网页画廊", "should_trigger": false},
+  {"query": "帮我把这次活动的照片备份到百度网盘并生成分享链接", "should_trigger": false}
+]

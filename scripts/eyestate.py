@@ -55,8 +55,14 @@ def available():
     return _get_mesh() is not None
 
 
-def eye_states(rgb, ear_thresh=0.15):
+def eye_states(rgb, ear_thresh=None):
     """对整张图判断各人脸睁/闭眼。返回 (closed, open_, checked)。"""
+    if ear_thresh is None:
+        try:
+            from _config import cfg
+            ear_thresh = cfg("eyes", "ear_thresh", 0.15)
+        except Exception:
+            ear_thresh = 0.15
     mesh = _get_mesh()
     if mesh is None:
         return 0, 0, 0

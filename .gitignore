@@ -9,6 +9,13 @@ test.jpg
 cull_report.csv
 cull_contactsheet.jpg
 culltest/
+triage_*.csv
+triage_report.csv
+selection_report.html
+*_annotated.jpg
+scaffoldtest/
+pipeline_*/
+*.skill
 *.log
 .idea/
 .vscode/

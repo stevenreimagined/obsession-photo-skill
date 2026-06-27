@@ -14,7 +14,9 @@ recommend_settings.py — Obsession 拍前参数推荐 / pre-shoot settings advi
 场景 scene: basketball stage lecture outdoor group portrait lowlight banquet
 依赖: 无(纯标准库)
 """
-import argparse, sys
+import argparse, sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _config import cfg  # 读取 config.yaml 默认值(可选)
 
 # 每个场景的参数预设。值是起点，脚本会按 light/region 微调。
 SCENES = {
@@ -133,9 +135,9 @@ def adjust_for_light(s, light):
 def main():
     ap = argparse.ArgumentParser(description="拍前参数推荐")
     ap.add_argument("--scene", help="场景名，见 --list")
-    ap.add_argument("--camera", default=None, help="机型，如 FX30 / α7IV / R6")
+    ap.add_argument("--camera", default=cfg("club", "default_camera", None), help="机型，如 FX30 / α7IV / R6")
     ap.add_argument("--light", choices=["low", "normal", "good"], default="normal")
-    ap.add_argument("--region", type=int, choices=[50, 60], default=50,
+    ap.add_argument("--region", type=int, choices=[50, 60], default=cfg("club", "region", 50),
                     help="市电频率：中国/欧洲=50，北美/日东=60")
     ap.add_argument("--list", action="store_true", help="列出场景")
     args = ap.parse_args()

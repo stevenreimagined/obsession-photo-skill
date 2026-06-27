@@ -1,6 +1,6 @@
 ---
 name: obsession
-description: 摄影社全流程助手——覆盖拍前/拍中/拍后 (End-to-end photography assistant for a club: pre-shoot settings, on-site troubleshooting, post-shoot critique/culling/editing). 触发场景包括:发来照片问"拍得怎么样/好在哪差在哪/怎么改进/帮我看构图曝光颜色"；问"这张怎么修图后期"；问"这张参数怎么拍的/快门光圈ISO"；问"这张像哪个大师/我该学谁"；**拍活动前问"XX场景该用什么参数/快门光圈ISO白平衡对焦连拍设置"(如室内篮球/舞台/讲座用FX30怎么设)**；**拍摄中现场问题"照片偏黄/快门调不动/脸太暗/LED屏有条纹/总是失焦怎么办"**；**拍完要"批量选片/初筛废片/连拍挑最佳张/检测构图问题"**。Use this skill for the whole photo workflow: recommending camera settings (shutter/aperture/ISO/WB/AF/burst/format/video fps/picture profile/anti-flicker) for a given scene and camera before a shoot; on-site troubleshooting (yellow cast, locked shutter, dark faces, LED banding, missed focus); and after the shoot for critique, EXIF teaching, master-style matching, auto-editing, composition checking, and batch culling/best-of-burst selection. Also explains what makes a good photograph.
+description: 摄影社全流程助手——覆盖拍前/拍中/拍后 (End-to-end photography assistant for a club: pre-shoot settings, on-site troubleshooting, post-shoot critique/culling/editing). 触发场景包括:发来照片问"拍得怎么样/好在哪差在哪/怎么改进/帮我看构图曝光颜色"；问"这张怎么修图后期"；问"这张参数怎么拍的/快门光圈ISO"；问"这张像哪个大师/我该学谁"；**拍活动前问"XX场景该用什么参数/快门光圈ISO白平衡对焦连拍设置"(如室内篮球/舞台/讲座用FX30怎么设)**；**拍摄中现场问题"照片偏黄/脸太暗/LED屏有条纹/总是失焦怎么办"，或参数被锁"快门不能调/ISO变灰/眼控开不了/触控追踪用不了"**；**拍完要"批量选片/初筛废片/连拍挑最佳张/检测构图问题"**；**要"按活动建文件夹/统一命名素材/快速初检有没有坏文件或视频无音频"**。Use this skill for the whole photo workflow: recommending camera settings (shutter/aperture/ISO/WB/AF/burst/format/video fps/picture profile/anti-flicker) for a given scene and camera before a shoot; on-site troubleshooting (yellow cast, locked shutter, dark faces, LED banding, missed focus); and after the shoot for critique, EXIF teaching, master-style matching, auto-editing, composition checking, and batch culling/best-of-burst selection. Also explains what makes a good photograph.
 ---
 
 # Obsession · 摄影看图 / 评图 / 修图助手
@@ -12,6 +12,8 @@ This skill helps **new photography-club members**. Be warm, specific, and action
 ---
 
 ## 三阶段总览 / Three phases
+
+> 不确定从哪开始、或想看完整流程，先读 `references/workflow.md`(工作流地图 + 新社员引导)。社团默认值(缩写/机型/频率/阈值/水印)集中在根目录 `config.yaml`，脚本自动读取。
 
 本 skill 覆盖一次拍摄任务的完整周期。先判断用户处在哪个阶段，再进对应流程：
 
@@ -26,12 +28,15 @@ This skill helps **new photography-club members**. Be warm, specific, and action
 | 用户说的话(示例) | 进入 | 用到 |
 |---|---|---|
 | "明天拍室内篮球/舞台，FX30 该怎么设参数" | 🅰 拍前参数推荐 | `scripts/recommend_settings.py` + `references/shooting_settings.md` |
-| "照片偏黄/快门调不动/脸太暗/LED有条纹/老失焦怎么办" | 🅱 现场问题诊断 | `references/troubleshooting.md` |
+| "照片偏黄/脸太暗/LED有条纹/老失焦怎么办" | 🅱 现场问题诊断 | `references/troubleshooting.md` |
+| "快门不能调/ISO变灰/眼控开不了/触控追踪用不了"(参数被锁) | 🅱 设置变灰诊断 | `references/settings_locked.md` |
 | "帮我看这张构图有没有问题"(有图片文件) | 🅱 构图检测 | `scripts/compose_check.py` |
 | "这张拍得怎么样/好在哪差在哪/怎么改进" | 🅲 评图流程 | `references/evaluation.md`、`benchmarks.md`、`master_matching.md` |
 | "这张怎么修图/后期" | 🅲 修图指导 | `references/editing.md` + `scripts/auto_edit.py` |
 | "这张参数怎么拍的/学看参数" | 🅲 EXIF 教学 | `scripts/exif_info.py` |
 | "帮我从这个文件夹选片/初筛/挑连拍最佳" | 🅲 选片初筛 | `scripts/cull.py` |
+| "拍这个活动帮我建文件夹/统一命名素材" | 🅰/🅲 文件组织 | `scripts/organize.py` |
+| "导完素材帮我快速扫一遍有没有问题/坏文件/没音频" | 🅲 快速初检 | `scripts/triage.py` |
 | "什么是好照片" | 概念讲解 | `references/evaluation.md` + `masters.md` |
 
 ---
@@ -53,13 +58,34 @@ python3 scripts/recommend_settings.py --list      # 查看支持的场景
 
 **现场问题诊断**：用户描述问题，读 `references/troubleshooting.md`，按 **最可能原因 → 立即操作 → 仍未解决时的下一步** 三段式回答。要短、可立即执行，结合用户机型给具体值(如"你 FX30 没机械快门，快门改 1/100")。
 
-**构图检测**(能拿到图片文件时)：跑 `scripts/compose_check.py 照片.jpg`，它检测地平线倾斜、人脸切边、主体过中心、头顶空间、主体过小、高光过曝、主体疑似脱焦、闭眼、背景杂乱，输出"✅通过/⚠️提醒"清单。把结果用人话转达，并给改进动作。注意:闭眼判断基于眼睛关键点(EAR)，**只在确信时报**；脸太小/侧脸取不到关键点时如实标"无法判断"，不臆断。
+**设置变灰/锁死诊断**：当用户说某些参数"不能调/变灰/开不了"(如快门、ISO、眼控、触控追踪)，读 `references/settings_locked.md`。关键认知:参数变灰几乎都是**上游某个模式接管了它**(最常见 S&Q、Cine EI、高帧率、非 M/S 档、代理录制冲突)。**多个参数同时变灰 → 通常是同一个根因**，先定位那个模式再解锁。直接给"当前处于 XX 模式所以 YY 受限，退出 XX 再调"。
+
+**构图检测**(能拿到图片文件时)：跑 `scripts/compose_check.py 照片.jpg`，它检测地平线倾斜、人脸切边、主体过中心、头顶空间、主体过小、高光过曝、主体疑似脱焦、闭眼、背景杂乱，输出"✅通过/⚠️提醒"清单。把结果用人话转达，并给改进动作。注意:闭眼判断基于眼睛关键点(EAR)，**只在确信时报**；脸太小/侧脸取不到关键点时如实标"无法判断"，不臆断。想要**可视化**就用 `scripts/annotate.py 照片.jpg`——把三分线、人脸框、地平线倾斜、过曝斑马线画到图上，适合教学。
 
 ---
 
 ## 🅲 拍后流程 / Post-shoot
 
 包含评图、修图、EXIF 教学、对标大师、选片。评图与修图见下面两节；EXIF/对标大师/选片见"工具脚本"与对应参考文件。**批量选片**用 `scripts/cull.py 文件夹/`：自动把照片分成 推荐保留/可选/建议淘汰/技术问题 四档，连拍分组挑★最佳张，输出 CSV + 彩框标注拼图。强调它是**技术初筛、不自动删除**，表情/情绪/故事性请人工复核。
+
+**文件组织 / 统一命名**(`scripts/organize.py`)——多人拍摄、后期协作的地基：
+```bash
+# 按活动建标准目录结构(01_RAW_Photo/Camera_A..、02_RAW_Video、03_Audio、04_Selects、05_Edit、06_Export、07_Delivery)
+python3 scripts/organize.py scaffold --name "Drama Festival" --date 2026-06-27 --cameras A B C -o <父目录>
+# 统一命名(默认只预览，确认后加 --apply；可 --copy 到新目录更安全)
+python3 scripts/organize.py rename <文件夹> --prefix OAO --event "Drama Festival" --date 20260627 --camera A
+```
+命名格式 `前缀_活动_日期_机位_序号.扩展名`(如 `OAO_DramaFestival_20260627_A_0001.ARW`)。`--date AUTO` 按每个文件的拍摄时间。**rename 默认只预览不改文件**，先给用户看映射、确认后再 `--apply`。
+
+**快速素材初检**(`scripts/triage.py`)——导完素材先扫一遍、只标技术问题不删除：
+```bash
+python3 scripts/triage.py <素材文件夹> [--csv 报告.csv]
+```
+照片查:文件损坏、可能失焦/抖动、高光大面积溢出、合照疑似闭眼、连拍重复过多；视频查(需 ffprobe):无法读取、无音频轨道、片段异常短；并提示时间戳断点。输出"第X–Y为同组连拍、第Z最清晰；第N号可能失焦；视频XX无音轨"这类**定位报告**。和 `cull.py` 的区别:triage 只快速标问题帮定位，cull 给完整四档选片建议。
+
+**选片报告**(`scripts/report.py <文件夹>`)——把 cull 结果做成自包含 HTML 报告(缩略图内嵌、可发给别人、可浏览器打印成 PDF)，按四档分区展示。
+
+**一键流水线**(`scripts/pipeline.py`)——把多步串起来：`postprocess <文件夹>` 自动跑 初检→选片→报告；`newshoot --name ...` 建目录结构。新社员怕麻烦时直接用它。
 
 ---
 
@@ -153,22 +179,32 @@ python3 scripts/auto_edit.py 照片.jpg --shadows 0.12 --warmth -0.05 --vignette
 
 ## 工具脚本 / Scripts
 
-让结论从"主观感觉"升级到"主观 + 客观"。依赖：参数/EXIF 类只需标准库或 `pillow`；图像分析类需 `opencv-python-headless` + `pillow` + `numpy`；睁闭眼判断额外需 `mediapipe`(**可选**，没装则闭眼一律标"无法判断"，不影响其他功能)。一次装齐：`pip install opencv-python-headless pillow numpy mediapipe --break-system-packages`。所有脚本自动按 EXIF 校正照片方向。
+让结论从"主观感觉"升级到"主观 + 客观"。依赖：参数/命名/EXIF 类只需标准库或 `pillow`；图像分析类需 `opencv-python-headless` + `pillow` + `numpy`；睁闭眼判断额外需 `mediapipe`(**可选**)；视频初检需系统 `ffmpeg/ffprobe`。一次装齐：`pip install opencv-python-headless pillow numpy mediapipe --break-system-packages`。所有脚本自动按 EXIF 校正照片方向。
 
 - **`scripts/recommend_settings.py`** — 🅰 拍前参数推荐。`--scene <场景> --camera <机型> --light low/normal/good --region 50/60`，`--list` 看场景。输出带解释的参数卡。
 - **`scripts/exif_info.py`** — 🅲 读取并**解读**拍摄参数。`照片.jpg`(单张:参数+教学解读) 或 `文件夹/`(批量概览)。微信/截图会抹掉 EXIF，读不到属正常。
 - **`scripts/auto_edit.py`** — 🅲 一键修图(用法见"修图指导流程")。默认保守，强度可调，自动出原图/成品对比。
 - **`scripts/compose_check.py`** — 🅱 单张构图/技术检测，输出 ✅/⚠️ 清单(倾斜、切边、过中心、头顶、过小、过曝、脱焦、闭眼[EAR,确信才报]、背景杂乱)。
-- **`scripts/eyestate.py`** — 睁闭眼判断模块(被上面两个脚本调用)，基于眼睛关键点 EAR，取不到关键点即返回"未知"，绝不靠"没检测到眼睛"反推闭眼。
 - **`scripts/cull.py`** — 🅲 批量选片初筛 + 连拍最佳张。`文件夹/ [-o 输出目录] [--blur N] [--burst N]`。输出四档分类的 CSV + 彩框标注拼图(绿保留/黄可选/灰淘汰/红技术问题, ★连拍最佳)。**只建议、不删除**。
+- **`scripts/organize.py`** — 🅰/🅲 项目目录脚手架(`scaffold`) + 统一命名(`rename`，默认预览，`--apply` 才执行，`--copy` 可复制到新目录)。
+- **`scripts/triage.py`** — 🅲 快速素材初检，只标技术问题(失焦/抖动/过曝/损坏/合照闭眼/连拍重复/无音轨/片段过短/时间断点)，输出定位报告。视频需 `ffprobe`。
+- **`scripts/annotate.py`** — 🅱 把检测结果可视化画到图上(三分线/人脸框/地平线/过曝斑马)。
+- **`scripts/report.py`** — 🅲 由 cull 结果生成自包含 HTML 选片报告(可打印成 PDF)。
+- **`scripts/pipeline.py`** — 一键工作流：`postprocess`(初检→选片→报告) / `newshoot`(建目录)。
+- **`scripts/eyestate.py`** — 睁闭眼判断模块(被 cull/compose_check/triage 调用)，基于眼睛关键点 EAR，取不到关键点即返回"未知"，绝不靠"没检测到眼睛"反推闭眼。
+- **`scripts/_config.py`** — 读取根目录 `config.yaml` 的默认值(被各脚本调用)。
 
-> 脚本的阈值都可调；客观指标(清晰度/曝光/人脸/构图)是辅助，**审美与最终取舍归摄影师**。
+> 脚本的阈值都可调(或在 `config.yaml` 统一改)；客观指标(清晰度/曝光/人脸/构图)是辅助，**审美与最终取舍归摄影师**。triage 与 cull 互补:triage 快速标问题帮定位，cull 给完整四档选片建议。
 
 ## 文件索引 / Files
 
+根目录：`config.yaml`(社团默认值，可选) · `evals/`(触发测试集)
+
 参考文件 references/：
+- `workflow.md` — 工作流地图 + 新社员引导(不确定从哪开始时先读)
 - `shooting_settings.md` — 🅰 拍前参数方法论 + 场景预设库 + 防频闪 + 机型说明
 - `troubleshooting.md` — 🅱 现场问题诊断("原因→操作→下一步")
+- `settings_locked.md` — 🅱 设置变灰/锁死诊断(S&Q/Cine EI/高帧率/曝光模式/代理录制)
 - `evaluation.md` — 🅲 六维评图框架 + 评分尺度(评图、选片时读)
 - `masters.md` — 各题材摄影大师与可学技术(讲概念、定标准时读)
 - `master_matching.md` — 🅲 对标大师匹配方法与话术
@@ -176,4 +212,4 @@ python3 scripts/auto_edit.py 照片.jpg --shadows 0.12 --warmth -0.05 --vignette
 - `benchmarks.md` — 各题材优秀照片文字标杆 + 社团作品库
 
 脚本 scripts/：
-- `recommend_settings.py`(🅰参数) · `exif_info.py`(🅲参数教学) · `auto_edit.py`(🅲修图) · `compose_check.py`(🅱构图检测) · `cull.py`(🅲选片初筛) · `eyestate.py`(睁闭眼模块,被调用)
+- `recommend_settings.py`(🅰参数) · `exif_info.py`(🅲参数教学) · `auto_edit.py`(🅲修图) · `compose_check.py`(🅱构图检测) · `annotate.py`(🅱可视化标注) · `cull.py`(🅲选片初筛) · `report.py`(🅲HTML报告) · `organize.py`(🅰/🅲建目录+命名) · `triage.py`(🅲快速初检) · `pipeline.py`(一键流水线) · `eyestate.py`(睁闭眼模块) · `_config.py`(读配置)

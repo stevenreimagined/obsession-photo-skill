@@ -31,6 +31,7 @@ except ImportError:
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from eyestate import eye_states, available as eyes_available  # 基于EAR的睁闭眼
+from _config import cfg  # 读取 config.yaml 默认值(可选)
 
 CASC = cv2.data.haarcascades
 FACE = cv2.CascadeClassifier(CASC + "haarcascade_frontalface_default.xml")
@@ -258,11 +259,11 @@ def main():
     ap = argparse.ArgumentParser(description="选片初筛 + 连拍最佳张")
     ap.add_argument("folder")
     ap.add_argument("-o", "--outdir", default=None)
-    ap.add_argument("--blur", type=float, default=90, help="虚焦阈值(分块清晰度第90百分位,越小越糊)")
-    ap.add_argument("--sharp-full", type=float, default=700, help="清晰满分参考")
-    ap.add_argument("--keep-above", type=float, default=60, help="推荐保留分数线")
-    ap.add_argument("--cull-below", type=float, default=38, help="建议淘汰分数线")
-    ap.add_argument("--burst", type=int, default=8, help="连拍相似度(汉明距离≤即同组)")
+    ap.add_argument("--blur", type=float, default=cfg("cull", "blur", 90), help="虚焦阈值(分块清晰度第90百分位,越小越糊)")
+    ap.add_argument("--sharp-full", type=float, default=cfg("cull", "sharp_full", 700), help="清晰满分参考")
+    ap.add_argument("--keep-above", type=float, default=cfg("cull", "keep_above", 60), help="推荐保留分数线")
+    ap.add_argument("--cull-below", type=float, default=cfg("cull", "cull_below", 38), help="建议淘汰分数线")
+    ap.add_argument("--burst", type=int, default=cfg("cull", "burst", 8), help="连拍相似度(汉明距离≤即同组)")
     ap.add_argument("--cols", type=int, default=5)
     args = ap.parse_args()
 
